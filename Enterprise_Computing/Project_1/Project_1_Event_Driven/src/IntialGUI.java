@@ -5,6 +5,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import Interface.ControllerInterface;
+import Interface.ProcessButtonObjectEvent;
+import Interface.ViewController;
 import Inventory.InventoryManagement;
 
 import javax.swing.JTextField;
@@ -13,15 +16,25 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 
-public class IntialGUI extends JFrame {
+public class IntialGUI extends JFrame implements ControllerInterface {
 
 	private JPanel contentPane;
+	
 	private JTextField NumberOfItemsField;
 	private JTextField Item1IDField;
 	private JTextField Item1QuanityField;
 	private JTextField Item1InfoField;
 	private JTextField OrderSubTotalField;
+	
 	static InventoryManagement IM = null;
+	
+	private JButton ProcessItemButton;
+	private JButton ConfirmItemButton;
+	private JButton ViewOrderButton;
+	private JButton FinishOrderButton;
+	private JButton NewOrderButton;
+	private JButton ExitButton;
+	
 
 	/**
 	 * Launch the application.
@@ -31,7 +44,10 @@ public class IntialGUI extends JFrame {
 			public void run() {
 				try {
 					IntialGUI frame = new IntialGUI();
-					IM = new InventoryManagement();
+					ViewController controller = new ViewController();
+					IM = new InventoryManagement(controller);
+					controller.addListener(IM);
+					controller.addListener(frame);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -78,17 +94,16 @@ public class IntialGUI extends JFrame {
 		contentPane.add(OrderSubTotalField);
 		OrderSubTotalField.setColumns(10);
 		
-		JButton ProcessItemButton = new JButton("Process Item #1");
+		ProcessItemButton = new JButton("Process Item #1");
 		ProcessItemButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				System.out.println("booty");
 				IM.readInventory();
 			}
 		});
 		ProcessItemButton.setBounds(10, 380, 130, 23);
 		contentPane.add(ProcessItemButton);
 		
-		JButton ConfirmItemButton = new JButton("Confirm Item #1");
+		ConfirmItemButton = new JButton("Confirm Item #1");
 		ConfirmItemButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
@@ -96,7 +111,7 @@ public class IntialGUI extends JFrame {
 		ConfirmItemButton.setBounds(150, 380, 130, 23);
 		contentPane.add(ConfirmItemButton);
 		
-		JButton ViewOrderButton = new JButton("View Order");
+		ViewOrderButton = new JButton("View Order");
 		ViewOrderButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
@@ -104,7 +119,7 @@ public class IntialGUI extends JFrame {
 		ViewOrderButton.setBounds(290, 380, 130, 23);
 		contentPane.add(ViewOrderButton);
 		
-		JButton FinishOrderButton = new JButton("Finish Order");
+		FinishOrderButton = new JButton("Finish Order");
 		FinishOrderButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
@@ -112,7 +127,7 @@ public class IntialGUI extends JFrame {
 		FinishOrderButton.setBounds(430, 380, 130, 23);
 		contentPane.add(FinishOrderButton);
 		
-		JButton NewOrderButton = new JButton("New Order");
+		NewOrderButton = new JButton("New Order");
 		NewOrderButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
@@ -120,12 +135,21 @@ public class IntialGUI extends JFrame {
 		NewOrderButton.setBounds(570, 380, 130, 23);
 		contentPane.add(NewOrderButton);
 		
-		JButton ExitButton = new JButton("Exit");
+		ExitButton = new JButton("Exit");
 		ExitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
 		ExitButton.setBounds(710, 380, 130, 23);
 		contentPane.add(ExitButton);
+	}
+
+	
+	
+
+	@Override
+	public void processExitButtonClick(ProcessButtonObjectEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

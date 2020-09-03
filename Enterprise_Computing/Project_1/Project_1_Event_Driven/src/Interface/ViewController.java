@@ -13,7 +13,21 @@ public class ViewController {
 		listener.removeElement(listenerObject);
 	}
 	
-	
+	@SuppressWarnings("unchecked")
+	public void exitButtonControl() {
+		Vector<ControllerInterface> copy;
+		
+		synchronized(this) {
+			copy = (Vector<ControllerInterface>) listener.clone();
+		}
+		
+		for(int i = 0; i < copy.size(); i++) {
+			ControllerInterface listenerCopy = (ControllerInterface) copy.elementAt(i);
+			ProcessButtonObjectEvent newEvent = new ProcessButtonObjectEvent(this);
+			listenerCopy.processExitButtonClick(newEvent);
+		}
+		
+	}
 	
 	
 	
