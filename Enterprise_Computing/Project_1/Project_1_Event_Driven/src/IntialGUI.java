@@ -2,11 +2,19 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import Interface.ControllerInterface;
 import Interface.ProcessButtonObjectEvent;
+import Interface.ProcessConfirmItemObjectEvent;
+import Interface.ProcessErrorMessageObjectEvent;
+import Interface.ProcessFinishOrderObjectEvent;
+import Interface.ProcessItemInformationObjectEvent;
+import Interface.ProcessNewOrderObjectEvent;
+import Interface.ProcessProcessItemObjectEvent;
+import Interface.ProcessViewOrderObjectEvent;
 import Interface.ViewController;
 import Inventory.InventoryManagement;
 
@@ -15,18 +23,22 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
+import javax.swing.JLabel;
+import java.awt.Font;
+import javax.swing.SwingConstants;
 
 public class IntialGUI extends JFrame implements ControllerInterface {
 
 	private JPanel contentPane;
 	
 	private JTextField NumberOfItemsField;
-	private JTextField Item1IDField;
-	private JTextField Item1QuanityField;
-	private JTextField Item1InfoField;
+	private JTextField ItemIDField;
+	private JTextField ItemQuanityField;
+	private JTextField ItemInfoField;
 	private JTextField OrderSubTotalField;
 	
 	static InventoryManagement IM = null;
+	static ViewController controller;
 	
 	private JButton ProcessItemButton;
 	private JButton ConfirmItemButton;
@@ -34,6 +46,12 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 	private JButton FinishOrderButton;
 	private JButton NewOrderButton;
 	private JButton ExitButton;
+	
+	private int numberItems;
+	private String itemNumber = "1";
+	private String itemID;
+	private String itemQty;
+	
 	
 
 	/**
@@ -44,10 +62,11 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 			public void run() {
 				try {
 					IntialGUI frame = new IntialGUI();
-					ViewController controller = new ViewController();
+					controller = new ViewController();
 					IM = new InventoryManagement(controller);
 					controller.addListener(IM);
 					controller.addListener(frame);
+					IM.readInventory();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -74,40 +93,57 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 		contentPane.add(NumberOfItemsField);
 		NumberOfItemsField.setColumns(10);
 		
-		Item1IDField = new JTextField();
-		Item1IDField.setBounds(513, 107, 370, 30);
-		contentPane.add(Item1IDField);
-		Item1IDField.setColumns(10);
+		ItemIDField = new JTextField();
+		ItemIDField.setBounds(513, 107, 370, 30);
+		contentPane.add(ItemIDField);
+		ItemIDField.setColumns(10);
 		
-		Item1QuanityField = new JTextField();
-		Item1QuanityField.setBounds(513, 158, 370, 30);
-		contentPane.add(Item1QuanityField);
-		Item1QuanityField.setColumns(10);
+		ItemQuanityField = new JTextField();
+		ItemQuanityField.setBounds(513, 158, 370, 30);
+		contentPane.add(ItemQuanityField);
+		ItemQuanityField.setColumns(10);
 		
-		Item1InfoField = new JTextField();
-		Item1InfoField.setBounds(513, 214, 370, 30);
-		contentPane.add(Item1InfoField);
-		Item1InfoField.setColumns(10);
+		ItemInfoField = new JTextField();
+		ItemInfoField.setBounds(513, 214, 370, 30);
+		contentPane.add(ItemInfoField);
+		ItemInfoField.setColumns(10);
 		
 		OrderSubTotalField = new JTextField();
 		OrderSubTotalField.setBounds(513, 266, 370, 30);
 		contentPane.add(OrderSubTotalField);
 		OrderSubTotalField.setColumns(10);
 		
-		ProcessItemButton = new JButton("Process Item #1");
+		ProcessItemButton = new JButton("Process Item "+itemNumber);
 		ProcessItemButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				IM.readInventory();
+				
+				numberItems = Integer.parseInt(NumberOfItemsField.getText());
+				itemID = ItemIDField.getText();
+				itemQty = ItemQuanityField.getText();
+				
+			
+				if(itemNumber.isEmpty() || itemID.isEmpty() || itemQty.isEmpty())
+					controller.errorMessage("Missing Fields");
+				
+			
+				else {
+					IM.findInventoryItem(itemID,itemQty);
+					ProcessItemButton.setEnabled(false);
+					ConfirmItemButton.setEnabled(true);
+				}
+				
 			}
 		});
+		
 		ProcessItemButton.setBounds(10, 380, 130, 23);
 		contentPane.add(ProcessItemButton);
 		
-		ConfirmItemButton = new JButton("Confirm Item #1");
+		ConfirmItemButton = new JButton("Confirm Item "+itemNumber);
 		ConfirmItemButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
+		
 		ConfirmItemButton.setBounds(150, 380, 130, 23);
 		contentPane.add(ConfirmItemButton);
 		
@@ -116,6 +152,7 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
+		
 		ViewOrderButton.setBounds(290, 380, 130, 23);
 		contentPane.add(ViewOrderButton);
 		
@@ -124,6 +161,7 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
+		
 		FinishOrderButton.setBounds(430, 380, 130, 23);
 		contentPane.add(FinishOrderButton);
 		
@@ -132,6 +170,7 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
+		
 		NewOrderButton.setBounds(570, 380, 130, 23);
 		contentPane.add(NewOrderButton);
 		
@@ -140,8 +179,53 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
+		
 		ExitButton.setBounds(710, 380, 130, 23);
 		contentPane.add(ExitButton);
+		
+		JLabel lblNewLabel = new JLabel("Enter number of items in this order");
+		lblNewLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblNewLabel.setForeground(Color.YELLOW);
+		lblNewLabel.setBounds(237, 66, 266, 14);
+		contentPane.add(lblNewLabel);
+		
+		JLabel lblEnterItemId = new JLabel("Enter item ID for item "+itemNumber);
+		lblEnterItemId.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblEnterItemId.setForeground(Color.YELLOW);
+		lblEnterItemId.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblEnterItemId.setBounds(237, 115, 266, 14);
+		contentPane.add(lblEnterItemId);
+		
+		JLabel lblEnterQuanityFor = new JLabel("Enter quanity for Item "+itemNumber);
+		lblEnterQuanityFor.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblEnterQuanityFor.setForeground(Color.YELLOW);
+		lblEnterQuanityFor.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblEnterQuanityFor.setBounds(237, 166, 266, 14);
+		contentPane.add(lblEnterQuanityFor);
+		
+		JLabel lblItemInfo = new JLabel("Item "+itemNumber+" info");
+		lblItemInfo.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblItemInfo.setForeground(Color.YELLOW);
+		lblItemInfo.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblItemInfo.setBounds(237, 222, 266, 14);
+		contentPane.add(lblItemInfo);
+		
+		JLabel lblOrderSubtotalFor = new JLabel("Order subtotal for" +itemNumber+" item(s)");
+		lblOrderSubtotalFor.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblOrderSubtotalFor.setForeground(Color.YELLOW);
+		lblOrderSubtotalFor.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblOrderSubtotalFor.setBounds(237, 274, 266, 14);
+		contentPane.add(lblOrderSubtotalFor);
+		
+		
+		
+		//disabling button
+		
+		ConfirmItemButton.setEnabled(false);
+		ViewOrderButton.setEnabled(false);
+		FinishOrderButton.setEnabled(false);
+		
 	}
 
 	
@@ -151,5 +235,48 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 	public void processExitButtonClick(ProcessButtonObjectEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void processNewOrderButtonClick(ProcessNewOrderObjectEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void processFinishOrderButtonClick(ProcessFinishOrderObjectEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void processViewOrderButtonClick(ProcessViewOrderObjectEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void processConfirmItemButtonClick(ProcessConfirmItemObjectEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void processProcessIButtonClick(ProcessProcessItemObjectEvent e) {
+		// TODO Auto-generated method stub
+		
+		
+	}
+
+	@Override
+	public void processErrorMessage(ProcessErrorMessageObjectEvent e, String message) {
+		// TODO Auto-generated method stub
+		JOptionPane.showMessageDialog(null, message);
+	}
+
+	@Override
+	public void processItemInformation(ProcessItemInformationObjectEvent e, String message) {
+		// TODO Auto-generated method stub
+		ItemInfoField.setText(message);
 	}
 }

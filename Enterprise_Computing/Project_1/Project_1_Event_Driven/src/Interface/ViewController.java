@@ -33,6 +33,64 @@ public class ViewController {
 	
 	
 	
+	public void errorMessage(String message) {
+		Vector<ControllerInterface> copy;
+		
+		synchronized(this) {
+			copy = (Vector<ControllerInterface>) listener.clone();
+		}
+		
+		for(int i = 0; i < copy.size(); i++) {
+			ControllerInterface listenerCopy = (ControllerInterface) copy.elementAt(i);
+			ProcessErrorMessageObjectEvent newEvent = new ProcessErrorMessageObjectEvent(this);
+			listenerCopy.processErrorMessage(newEvent,message);
+		}
+		
+	}
+	
+	
+	
+	public void successMessage(String message) {
+		Vector<ControllerInterface> copy;
+		
+		synchronized(this) {
+			copy = (Vector<ControllerInterface>) listener.clone();
+		}
+		
+		for(int i = 0; i < copy.size(); i++) {
+			ControllerInterface listenerCopy = (ControllerInterface) copy.elementAt(i);
+			ProcessErrorMessageObjectEvent newEvent = new ProcessErrorMessageObjectEvent(this);
+			listenerCopy.processErrorMessage(newEvent,message);
+		}
+		
+	}
+	
+	
+	
+	
+	
+	public void itemInformation(String message) {
+		Vector<ControllerInterface> copy;
+		
+		synchronized(this) {
+			copy = (Vector<ControllerInterface>) listener.clone();
+		}
+		
+		for(int i = 0; i < copy.size(); i++) {
+			ControllerInterface listenerCopy = (ControllerInterface) copy.elementAt(i);
+			ProcessItemInformationObjectEvent newEvent = new ProcessItemInformationObjectEvent(this);
+			listenerCopy.processItemInformation(newEvent,message);
+		}
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
