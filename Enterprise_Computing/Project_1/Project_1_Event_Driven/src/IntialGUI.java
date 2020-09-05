@@ -57,6 +57,8 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 	private String itemQty;
 	static IntialGUI frame;
 	
+	private int intialNumberOfItems = 0;
+	
 	private static DecimalFormat df = new DecimalFormat("#.##");
 	
 
@@ -123,7 +125,11 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 		ProcessItemButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				numberItems = Integer.parseInt(NumberOfItemsField.getText());
+				
+				if(intialNumberOfItems == 0) {
+					numberItems = Integer.parseInt(NumberOfItemsField.getText());
+					intialNumberOfItems++;
+				}
 
 				itemID = ItemIDField.getText();
 				itemQty = ItemQuanityField.getText();
@@ -133,8 +139,7 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 					controller.errorMessage("Missing Fields");
 				
 			
-				else {
-					IM.findInventoryItem(itemID,itemQty);
+				else if(IM.findInventoryItem(itemID,itemQty) == true) {
 					ProcessItemButton.setEnabled(false);
 					ConfirmItemButton.setEnabled(true);
 				}
@@ -167,6 +172,7 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 					
 					ItemIDField.setText("");
 					ItemQuanityField.setText("");
+					ViewOrderButton.setEnabled(true);
 					
 					
 				}
@@ -177,6 +183,8 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 					ConfirmItemButton.setEnabled(false);
 					ViewOrderButton.setEnabled(true);
 					FinishOrderButton.setEnabled(true);
+					ItemIDField.setText("");
+					ItemQuanityField.setText("");
 				}
 				
 				
@@ -191,6 +199,8 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 		ViewOrderButton = new JButton("View Order");
 		ViewOrderButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				//IM.currentOrder(itemInfo, amount, viewOrder);
+				 IM.currentOrder();
 			}
 		});
 		
@@ -200,6 +210,7 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 		FinishOrderButton = new JButton("Finish Order");
 		FinishOrderButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				IM.FinishOrder();
 			}
 		});
 		
@@ -320,6 +331,7 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 	@Override
 	public void processItemAddedMessage(ProcessItemAddedMessageObjectEvent e, String message) {
 		// TODO Auto-generated method stub
+		JOptionPane.showMessageDialog(null, message);
 		
 	}
 

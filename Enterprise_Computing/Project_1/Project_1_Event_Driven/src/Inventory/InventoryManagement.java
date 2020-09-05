@@ -1,10 +1,20 @@
 package Inventory;
 
 import java.io.File;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.DecimalFormat;
 import java.util.Hashtable;
 import java.util.Scanner;
+
+import javax.swing.JOptionPane;
 
 import Interface.ControllerInterface;
 import Interface.ProcessButtonObjectEvent;
@@ -29,13 +39,18 @@ public class InventoryManagement implements ControllerInterface {
 	
 	List<String> currentItems;
 	
+	String[] currentItemsArray;
+	
+	String[] finishedItemsArray;
+	
 	double currentAmount;
 	
 	
 	private static DecimalFormat df = new DecimalFormat("#.##");
 	
+	private int count = 0;
 	
-
+	
 	public InventoryManagement(ViewController controller) {
 		
 		this.controller = controller;
@@ -74,7 +89,7 @@ public class InventoryManagement implements ControllerInterface {
 	}
 
 	
-	public void findInventoryItem(String inventoryNumber,String itemQty) {
+	public boolean findInventoryItem(String inventoryNumber,String itemQty) {
 		
 		
 		String item;
@@ -88,6 +103,7 @@ public class InventoryManagement implements ControllerInterface {
 		
 		if(!(inventoryTable.containsKey(inventoryNumber))) {
 			controller.errorMessage("Item ID not found");	
+			return false;
 		}
 		
 
@@ -99,9 +115,7 @@ public class InventoryManagement implements ControllerInterface {
 			item = itemInfo[0];
 			itemPrice = Double.parseDouble(itemInfo[1].replaceAll("\\s+", ""));
 			itemAmount = Integer.parseInt(itemQty);
-			
-			
-			
+				
 			//Applying discount
 			if(itemAmount <= 4 && itemAmount != 0)
 				discount=0.0;
@@ -113,7 +127,6 @@ public class InventoryManagement implements ControllerInterface {
 				discount=20.0;
 			
 			
-		
 			if(discount == 0)
 				finalPrice = itemPrice*itemAmount;
 			
@@ -126,19 +139,121 @@ public class InventoryManagement implements ControllerInterface {
 			item = inventoryNumber +" "+ itemInfo[0] + " $" + itemPrice.toString() +" " + itemQty +" "+(int)Math.round(discount)+"% $" + df.format(finalPrice);
 			
 			controller.itemInformation(item);
-			currentOrder(item, finalPrice,false);
+			currentOrder(item, finalPrice);
+			return true;
 		}
 	
 	}
 	
 	
-	public void currentOrder(String itemInfo, double amount, boolean confirmed) {
-		
-		
+	public void currentOrder(String itemInfo, double amount) {
+		count++;
 		currentItems.add(itemInfo);
-		currentAmount+=amount;		
+		currentAmount+=amount;	
+
+	}
+
+	public void currentOrder() {
+		
+		int j = 0;
+		
+		
+		currentItemsArray = new String[currentItems.size()];
+	
+		for(int i = 0; i < currentItems.size(); i++) {
+			currentItemsArray[i] = (j=i+1)+")."+currentItems.get(i);
+		}
+				
+		JOptionPane.showMessageDialog(null, currentItemsArray);
 		
 	}
+	
+	
+	public void FinishOrder() {
+		
+		
+		
+		String itemized = "";
+		String itemizedMessage = "";
+		int j = 0;
+		finishedItemsArray = new String[currentItems.size()];
+		currentItemsArray = new String[currentItems.size()];
+		
+
+		
+		for(int i = 0; i < currentItems.size(); i++) {
+			currentItemsArray[i] = (j=i+1)+")."+currentItems.get(i);
+			itemizedMessage += currentItemsArray[i]+'\n';
+		}
+			
+		
+		
+		for(int i = 0; i < currentItems.size(); i++) {
+			finishedItemsArray[i] = currentItems.get(i);
+			itemized += finishedItemsArray[i] +'\n';
+		}
+				
+				
+		
+		LocalDateTime date = LocalDateTime.now();
+		DateTimeFormatter formatDate  = DateTimeFormatter.ofPattern("dd-MM-yyyy, HH:mm:ss");
+		DateTimeFormatter formatDateFile  = DateTimeFormatter.ofPattern("ddMMyyyyHHmm");
+		
+		
+		String formattedDate = "Date: "+date.format(formatDate)+"\n";
+		String formattedDateFile = "Date: "+date.format(formatDateFile)+"\n";
+		String numberOfLine = "Number of line items: "+currentItems.size()+"\n";
+		String categorize = "Item#/ ID/ Price/ Qty/ Disc %/ Subtotal:\n\n";
+		
+		//insert currentItems array
+		
+		String orderSubTotal = "\nOrder subtotal: $"+currentAmount+"\n";
+		String taxRate = "Tax Rate: 6%\n";
+		Double taxAmount = (currentAmount*.06);
+		String taxAmountText = "Tax Amount: $";
+		Double orderTotal = taxAmount+currentAmount;
+		String orderTotalText = "\nOrder Total: $";
+		String thankYou = "\nThank you for shopping at Bobs\n";
+		
+		
+		String orderInformation = formattedDate+numberOfLine+categorize+itemizedMessage+orderSubTotal+taxRate+taxAmountText+df.format(taxAmount)+orderTotalText+df.format(orderTotal)+thankYou;
+		String orderInformationFile = (date.format(formatDateFile))+itemized+(date.format(formatDate));
+		
+		
+		JOptionPane.showMessageDialog(null, orderInformation);
+		
+	
+		try {
+			
+			File transactionFile = new File("\\Users\\Blake Patterson\\Desktop\\transaction.txt");
+			
+			if(transactionFile.exists() && !transactionFile.isDirectory()) {
+				for(int i = 0; i < currentItemsArray.length;i++) {
+					Files.write(Paths.get("\\Users\\Blake Patterson\\Desktop\\transaction.txt"), orderInformationFile.replace('\n',',').getBytes(),StandardOpenOption.APPEND);
+				}
+			}
+				
+			
+			else {
+				File newTransactionFile = new File("\\Users\\Blake Patterson\\Desktop\\transaction.txt");
+				newTransactionFile.createNewFile();
+				Files.write(Paths.get("\\Users\\Blake Patterson\\Desktop\\transaction.txt"), orderInformationFile.replace('\n', ',').getBytes(),StandardOpenOption.APPEND);
+			}
+				
+			
+		}
+		catch(IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+	}
+	
+	
+	
+	
+	
+	
 	
 	
 	@Override
