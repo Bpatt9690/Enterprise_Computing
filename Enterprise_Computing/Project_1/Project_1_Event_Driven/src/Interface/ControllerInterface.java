@@ -11,6 +11,8 @@ public interface ControllerInterface extends EventListener {
 	public void processConfirmItemButtonClick(ProcessConfirmItemObjectEvent e);
 	public void processProcessIButtonClick(ProcessProcessItemObjectEvent e);
 	public void processErrorMessage(ProcessErrorMessageObjectEvent e, String message);
+	public void processItemAddedMessage(ProcessItemAddedMessageObjectEvent e, String message);
+	public void processOrderSubTotalMessage(ProcessOrderSubTotalObjectEvent e, Double amount);
 	
 	public void processItemInformation(ProcessItemInformationObjectEvent e, String messasge);
 

@@ -11,8 +11,10 @@ import Interface.ProcessButtonObjectEvent;
 import Interface.ProcessConfirmItemObjectEvent;
 import Interface.ProcessErrorMessageObjectEvent;
 import Interface.ProcessFinishOrderObjectEvent;
+import Interface.ProcessItemAddedMessageObjectEvent;
 import Interface.ProcessItemInformationObjectEvent;
 import Interface.ProcessNewOrderObjectEvent;
+import Interface.ProcessOrderSubTotalObjectEvent;
 import Interface.ProcessProcessItemObjectEvent;
 import Interface.ProcessViewOrderObjectEvent;
 import Interface.ViewController;
@@ -21,6 +23,7 @@ import Inventory.InventoryManagement;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 import javax.swing.JLabel;
@@ -48,10 +51,13 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 	private JButton ExitButton;
 	
 	private int numberItems;
+	private int currentItem = 1;
 	private String itemNumber = "1";
 	private String itemID;
 	private String itemQty;
+	static IntialGUI frame;
 	
+	private static DecimalFormat df = new DecimalFormat("#.##");
 	
 
 	/**
@@ -61,7 +67,7 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					IntialGUI frame = new IntialGUI();
+					frame = new IntialGUI();
 					controller = new ViewController();
 					IM = new InventoryManagement(controller);
 					controller.addListener(IM);
@@ -118,9 +124,10 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				numberItems = Integer.parseInt(NumberOfItemsField.getText());
+
 				itemID = ItemIDField.getText();
 				itemQty = ItemQuanityField.getText();
-				
+
 			
 				if(itemNumber.isEmpty() || itemID.isEmpty() || itemQty.isEmpty())
 					controller.errorMessage("Missing Fields");
@@ -130,7 +137,6 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 					IM.findInventoryItem(itemID,itemQty);
 					ProcessItemButton.setEnabled(false);
 					ConfirmItemButton.setEnabled(true);
-					System.out.println("Budda");
 				}
 				
 			}
@@ -142,6 +148,40 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 		ConfirmItemButton = new JButton("Confirm Item "+itemNumber);
 		ConfirmItemButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
+				controller.successMessage("Item #"+currentItem+" accepted");
+				currentItem++;
+				
+			
+				if(currentItem <= numberItems) {
+					
+			
+					itemNumber = String.valueOf(currentItem);
+					
+					
+					ProcessItemButton.setText("Process Item "+itemNumber);
+					ProcessItemButton.setEnabled(true);
+					
+					ConfirmItemButton.setText("Confirm Item "+itemNumber);
+					ConfirmItemButton.setEnabled(false);
+					
+					ItemIDField.setText("");
+					ItemQuanityField.setText("");
+					
+					
+				}
+				
+				else
+				{
+					ProcessItemButton.setEnabled(false);
+					ConfirmItemButton.setEnabled(false);
+					ViewOrderButton.setEnabled(true);
+					FinishOrderButton.setEnabled(true);
+				}
+				
+				
+				
+				
 			}
 		});
 		
@@ -178,6 +218,7 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 		ExitButton = new JButton("Exit");
 		ExitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
 			}
 		});
 		
@@ -218,10 +259,7 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 		lblOrderSubtotalFor.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblOrderSubtotalFor.setBounds(237, 274, 266, 14);
 		contentPane.add(lblOrderSubtotalFor);
-		
-		
-		
-		//disabling button
+	
 		
 		ConfirmItemButton.setEnabled(false);
 		ViewOrderButton.setEnabled(false);
@@ -229,8 +267,6 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 		
 	}
 
-	
-	
 
 	@Override
 	public void processExitButtonClick(ProcessButtonObjectEvent e) {
@@ -279,5 +315,18 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 	public void processItemInformation(ProcessItemInformationObjectEvent e, String message) {
 		// TODO Auto-generated method stub
 		ItemInfoField.setText(message);
+	}
+
+	@Override
+	public void processItemAddedMessage(ProcessItemAddedMessageObjectEvent e, String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void processOrderSubTotalMessage(ProcessOrderSubTotalObjectEvent e, Double amount) {
+		// TODO Auto-generated method stub
+		OrderSubTotalField.setText("$"+df.format(amount));
+		
 	}
 }

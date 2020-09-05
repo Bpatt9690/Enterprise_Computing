@@ -2,6 +2,7 @@ package Inventory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.text.DecimalFormat;
 import java.util.Hashtable;
 import java.util.Scanner;
 
@@ -10,8 +11,10 @@ import Interface.ProcessButtonObjectEvent;
 import Interface.ProcessConfirmItemObjectEvent;
 import Interface.ProcessErrorMessageObjectEvent;
 import Interface.ProcessFinishOrderObjectEvent;
+import Interface.ProcessItemAddedMessageObjectEvent;
 import Interface.ProcessItemInformationObjectEvent;
 import Interface.ProcessNewOrderObjectEvent;
+import Interface.ProcessOrderSubTotalObjectEvent;
 import Interface.ProcessProcessItemObjectEvent;
 import Interface.ProcessViewOrderObjectEvent;
 import Interface.ViewController;
@@ -24,11 +27,22 @@ public class InventoryManagement implements ControllerInterface {
 
 	Hashtable<String,String> inventoryTable;
 	
+	List<String> currentItems;
+	
+	double currentAmount;
+	
+	
+	private static DecimalFormat df = new DecimalFormat("#.##");
+	
+	
+
 	public InventoryManagement(ViewController controller) {
 		
 		this.controller = controller;
 		String InventoryFile = null;	
 		inventoryTable = new Hashtable<String,String>();
+		this.currentItems = new ArrayList<String>();
+		this.currentAmount = 0.00;
 	};
 	
 	
@@ -49,8 +63,6 @@ public class InventoryManagement implements ControllerInterface {
 			
 		}
 		
-		System.out.println(inventoryTable);
-		
 	}	
 	
 	private void inventoryFiling(String inventoryItem) {
@@ -69,8 +81,9 @@ public class InventoryManagement implements ControllerInterface {
 		String[] itemInfo;
 		Double itemPrice;
 		Double finalPrice;
+		Double discountAmount;
 		int itemAmount;
-		Double discount = .0;
+		Double discount = 0.0;
 		
 		
 		if(!(inventoryTable.containsKey(inventoryNumber))) {
@@ -88,19 +101,43 @@ public class InventoryManagement implements ControllerInterface {
 			itemAmount = Integer.parseInt(itemQty);
 			
 			
+			
+			//Applying discount
 			if(itemAmount <= 4 && itemAmount != 0)
-				discount = .0;
+				discount=0.0;
 			else if(itemAmount > 4 && itemAmount <= 9)
-				discount =.10;
+				discount=10.0;
+			else if(itemAmount >= 10 && itemAmount <= 14)
+				discount=15.0;
+			else if(itemAmount >= 15)
+				discount=20.0;
+			
 			
 		
-			finalPrice = itemPrice*itemAmount;
+			if(discount == 0)
+				finalPrice = itemPrice*itemAmount;
 			
-			item = inventoryNumber +" "+ itemInfo[0] + " $" + itemPrice.toString() +" " + itemQty +" "+discount*100+"% " + finalPrice;
+			else {
+				discountAmount = (discount/100.0);
+				finalPrice = (itemPrice*itemAmount) - ((itemPrice*itemAmount)*discountAmount);
+	
+			}
+			
+			item = inventoryNumber +" "+ itemInfo[0] + " $" + itemPrice.toString() +" " + itemQty +" "+(int)Math.round(discount)+"% $" + df.format(finalPrice);
 			
 			controller.itemInformation(item);
+			currentOrder(item, finalPrice,false);
 		}
 	
+	}
+	
+	
+	public void currentOrder(String itemInfo, double amount, boolean confirmed) {
+		
+		
+		currentItems.add(itemInfo);
+		currentAmount+=amount;		
+		
 	}
 	
 	
@@ -156,6 +193,22 @@ public class InventoryManagement implements ControllerInterface {
 	@Override
 	public void processItemInformation(ProcessItemInformationObjectEvent e, String message) {
 		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void processItemAddedMessage(ProcessItemAddedMessageObjectEvent e, String message) {
+		// TODO Auto-generated method stub
+		controller.orderSubTotal(currentAmount);
+		
+	}
+
+
+	@Override
+	public void processOrderSubTotalMessage(ProcessOrderSubTotalObjectEvent e, Double amount) {
+		// TODO Auto-generated method stub
+	
 		
 	}
 	

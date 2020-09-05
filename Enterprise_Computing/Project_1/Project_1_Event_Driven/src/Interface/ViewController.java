@@ -59,8 +59,8 @@ public class ViewController {
 		
 		for(int i = 0; i < copy.size(); i++) {
 			ControllerInterface listenerCopy = (ControllerInterface) copy.elementAt(i);
-			ProcessErrorMessageObjectEvent newEvent = new ProcessErrorMessageObjectEvent(this);
-			listenerCopy.processErrorMessage(newEvent,message);
+			ProcessItemAddedMessageObjectEvent newEvent = new ProcessItemAddedMessageObjectEvent(this);
+			listenerCopy.processItemAddedMessage(newEvent,message);
 		}
 		
 	}
@@ -83,6 +83,23 @@ public class ViewController {
 		}
 		
 	}
+	
+	
+	public void orderSubTotal(Double amount) {
+		Vector<ControllerInterface> copy;
+		
+		synchronized(this) {
+			copy = (Vector<ControllerInterface>) listener.clone();
+		}
+		
+		for(int i = 0; i < copy.size(); i++) {
+			ControllerInterface listenerCopy = (ControllerInterface) copy.elementAt(i);
+			ProcessOrderSubTotalObjectEvent newEvent = new ProcessOrderSubTotalObjectEvent(this);
+			listenerCopy.processOrderSubTotalMessage(newEvent,amount);
+		}
+		
+	}
+	
 	
 	
 	
