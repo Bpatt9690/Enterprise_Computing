@@ -130,6 +130,7 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 					IM.findInventoryItem(itemID,itemQty);
 					ProcessItemButton.setEnabled(false);
 					ConfirmItemButton.setEnabled(true);
+					System.out.println("Budda");
 				}
 				
 			}
