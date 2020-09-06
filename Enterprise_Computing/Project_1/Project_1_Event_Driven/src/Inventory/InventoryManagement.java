@@ -179,8 +179,6 @@ public class InventoryManagement implements ControllerInterface {
 		finishedItemsArray = new String[currentItems.size()];
 		currentItemsArray = new String[currentItems.size()];
 		
-
-		
 		for(int i = 0; i < currentItems.size(); i++) {
 			currentItemsArray[i] = (j=i+1)+")."+currentItems.get(i);
 			itemizedMessage += currentItemsArray[i]+'\n';
@@ -194,7 +192,6 @@ public class InventoryManagement implements ControllerInterface {
 		}
 				
 				
-		
 		LocalDateTime date = LocalDateTime.now();
 		DateTimeFormatter formatDate  = DateTimeFormatter.ofPattern("dd-MM-yyyy, HH:mm:ss");
 		DateTimeFormatter formatDateFile  = DateTimeFormatter.ofPattern("ddMMyyyyHHmm");
@@ -204,9 +201,7 @@ public class InventoryManagement implements ControllerInterface {
 		String formattedDateFile = "Date: "+date.format(formatDateFile)+"\n";
 		String numberOfLine = "Number of line items: "+currentItems.size()+"\n";
 		String categorize = "Item#/ ID/ Price/ Qty/ Disc %/ Subtotal:\n\n";
-		
-		//insert currentItems array
-		
+
 		String orderSubTotal = "\nOrder subtotal: $"+currentAmount+"\n";
 		String taxRate = "Tax Rate: 6%\n";
 		Double taxAmount = (currentAmount*.06);
