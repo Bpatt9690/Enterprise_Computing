@@ -57,6 +57,22 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 	private String itemQty;
 	static IntialGUI frame;
 	
+	
+	
+	
+	
+	//JLabel lblEnterItemId = new JLabel("Enter item ID for item "+itemNumber);
+	//JLabel lblEnterQuanityFor = new JLabel("Enter quanity for Item "+itemNumber);
+	//JLabel lblItemInfo = new JLabel("Item "+itemNumber+" info");
+	//JLabel lblOrderSubtotalFor 
+	
+	private JLabel lblEnterItemId;
+	private JLabel lblEnterQuanityFor;
+	private JLabel lblItemInfo;
+	private JLabel lblOrderSubtotalFor;
+	
+	
+	
 	private int intialNumberOfItems = 0;
 	
 	private static DecimalFormat df = new DecimalFormat("#.##");
@@ -125,11 +141,13 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 		ProcessItemButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
+				NumberOfItemsField.setEditable(false);
 				
 				if(intialNumberOfItems == 0) {
 					numberItems = Integer.parseInt(NumberOfItemsField.getText());
 					intialNumberOfItems++;
 				}
+			
 
 				itemID = ItemIDField.getText();
 				itemQty = ItemQuanityField.getText();
@@ -187,6 +205,18 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 					ItemQuanityField.setText("");
 				}
 				
+			
+	
+				
+				
+				lblEnterItemId.setText("Enter item ID for item "+itemNumber);
+				lblEnterQuanityFor.setText("Enter quanity for Item "+itemNumber);
+				lblItemInfo.setText("Item "+itemNumber+" info");
+				lblOrderSubtotalFor.setText("Order subtotal for" +itemNumber+" item(s)");
+				
+				
+				
+				
 				
 				
 				
@@ -220,6 +250,17 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 		NewOrderButton = new JButton("New Order");
 		NewOrderButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
+				controller.newOrder();
+				itemNumber = "1";
+				intialNumberOfItems  = 0;
+				currentItem = 1;
+				NumberOfItemsField.setEditable(true);
+				ProcessItemButton.setText("Process Item "+itemNumber);
+				ConfirmItemButton.setText("Confirm Item "+itemNumber);
+				ViewOrderButton.setEnabled(false);
+				FinishOrderButton.setEnabled(false);
+				ProcessItemButton.setEnabled(true);
 			}
 		});
 		
@@ -243,35 +284,34 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 		lblNewLabel.setBounds(237, 66, 266, 14);
 		contentPane.add(lblNewLabel);
 		
-		JLabel lblEnterItemId = new JLabel("Enter item ID for item "+itemNumber);
+		lblEnterItemId = new JLabel("Enter item ID for item "+itemNumber);
 		lblEnterItemId.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblEnterItemId.setForeground(Color.YELLOW);
 		lblEnterItemId.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblEnterItemId.setBounds(237, 115, 266, 14);
 		contentPane.add(lblEnterItemId);
 		
-		JLabel lblEnterQuanityFor = new JLabel("Enter quanity for Item "+itemNumber);
+		lblEnterQuanityFor = new JLabel("Enter quanity for Item "+itemNumber);
 		lblEnterQuanityFor.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblEnterQuanityFor.setForeground(Color.YELLOW);
 		lblEnterQuanityFor.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblEnterQuanityFor.setBounds(237, 166, 266, 14);
 		contentPane.add(lblEnterQuanityFor);
 		
-		JLabel lblItemInfo = new JLabel("Item "+itemNumber+" info");
+		lblItemInfo = new JLabel("Item "+itemNumber+" info");
 		lblItemInfo.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblItemInfo.setForeground(Color.YELLOW);
 		lblItemInfo.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblItemInfo.setBounds(237, 222, 266, 14);
 		contentPane.add(lblItemInfo);
 		
-		JLabel lblOrderSubtotalFor = new JLabel("Order subtotal for" +itemNumber+" item(s)");
+		lblOrderSubtotalFor = new JLabel("Order subtotal for " +itemNumber+" item(s)");
 		lblOrderSubtotalFor.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblOrderSubtotalFor.setForeground(Color.YELLOW);
 		lblOrderSubtotalFor.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblOrderSubtotalFor.setBounds(237, 274, 266, 14);
 		contentPane.add(lblOrderSubtotalFor);
 	
-		
 		ConfirmItemButton.setEnabled(false);
 		ViewOrderButton.setEnabled(false);
 		FinishOrderButton.setEnabled(false);
@@ -289,6 +329,12 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 	public void processNewOrderButtonClick(ProcessNewOrderObjectEvent e) {
 		// TODO Auto-generated method stub
 		
+		NumberOfItemsField.setText("");
+		ItemIDField.setText("");
+		ItemQuanityField.setText("");
+		ItemInfoField.setText("");
+		OrderSubTotalField.setText("");
+	
 	}
 
 	@Override

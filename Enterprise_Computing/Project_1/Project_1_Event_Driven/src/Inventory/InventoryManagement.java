@@ -200,7 +200,7 @@ public class InventoryManagement implements ControllerInterface {
 		String formattedDate = "Date: "+date.format(formatDate)+"\n";
 		String formattedDateFile = "Date: "+date.format(formatDateFile)+"\n";
 		String numberOfLine = "Number of line items: "+currentItems.size()+"\n";
-		String categorize = "Item#/ ID/ Price/ Qty/ Disc %/ Subtotal:\n\n";
+		String categorize = "Item#/ ID/ Title/ Price/ Qty/ Disc %/ Subtotal:\n\n";
 
 		String orderSubTotal = "\nOrder subtotal: $"+currentAmount+"\n";
 		String taxRate = "Tax Rate: 6%\n";
@@ -212,7 +212,11 @@ public class InventoryManagement implements ControllerInterface {
 		
 		
 		String orderInformation = formattedDate+numberOfLine+categorize+itemizedMessage+orderSubTotal+taxRate+taxAmountText+df.format(taxAmount)+orderTotalText+df.format(orderTotal)+thankYou;
-		String orderInformationFile = (date.format(formatDateFile))+itemized+(date.format(formatDate));
+		String orderInformationFile = "";//(date.format(formatDateFile))+" "+itemized+(date.format(formatDate));
+		
+		for(int k = 0; k < currentItems.size(); k++) {
+			orderInformationFile += (date.format(formatDateFile))+" "+finishedItemsArray[k]+ date.format(formatDate)+"\n";
+		}
 		
 		
 		JOptionPane.showMessageDialog(null, orderInformation);
@@ -224,7 +228,7 @@ public class InventoryManagement implements ControllerInterface {
 			
 			if(transactionFile.exists() && !transactionFile.isDirectory()) {
 				for(int i = 0; i < currentItemsArray.length;i++) {
-					Files.write(Paths.get("\\Users\\Blake Patterson\\Desktop\\transaction.txt"), orderInformationFile.replace('\n',',').getBytes(),StandardOpenOption.APPEND);
+					Files.write(Paths.get("\\Users\\Blake Patterson\\Desktop\\transaction.txt"), orderInformationFile.getBytes(),StandardOpenOption.APPEND);
 				}
 			}
 				
@@ -232,7 +236,7 @@ public class InventoryManagement implements ControllerInterface {
 			else {
 				File newTransactionFile = new File("\\Users\\Blake Patterson\\Desktop\\transaction.txt");
 				newTransactionFile.createNewFile();
-				Files.write(Paths.get("\\Users\\Blake Patterson\\Desktop\\transaction.txt"), orderInformationFile.replace('\n', ',').getBytes(),StandardOpenOption.APPEND);
+				Files.write(Paths.get("\\Users\\Blake Patterson\\Desktop\\transaction.txt"), orderInformationFile.getBytes(),StandardOpenOption.APPEND);
 			}
 				
 			
@@ -261,7 +265,10 @@ public class InventoryManagement implements ControllerInterface {
 	@Override
 	public void processNewOrderButtonClick(ProcessNewOrderObjectEvent e) {
 		// TODO Auto-generated method stub
-		
+	
+		this.currentAmount = 0.0;		
+		this.currentItems.clear();
+	
 	}
 
 

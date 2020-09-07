@@ -13,6 +13,8 @@ public class ViewController {
 		listener.removeElement(listenerObject);
 	}
 	
+	
+	
 	@SuppressWarnings("unchecked")
 	public void exitButtonControl() {
 		Vector<ControllerInterface> copy;
@@ -99,6 +101,24 @@ public class ViewController {
 		}
 		
 	}
+	
+	
+	
+	public void newOrder() {
+		Vector<ControllerInterface> copy;
+		
+		synchronized(this) {
+			copy = (Vector<ControllerInterface>) listener.clone();
+		}
+		
+		for(int i = 0; i < copy.size(); i++) {
+			ControllerInterface listenerCopy = (ControllerInterface) copy.elementAt(i);
+			ProcessNewOrderObjectEvent newEvent = new ProcessNewOrderObjectEvent(this);
+			listenerCopy.processNewOrderButtonClick(newEvent);
+		}
+		
+	}
+	
 	
 	
 	
