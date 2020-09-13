@@ -1,3 +1,11 @@
+/*
+ * Name:Blake Patterson
+ * Course: CNT4714-Fall 2020
+ * Assignment Title: Project 1 - Event-driven Enterprise Simulation
+ * Date: Sunday September 13th
+ * 
+ */
+
 package Inventory;
 
 import java.io.File;
@@ -45,12 +53,10 @@ public class InventoryManagement implements ControllerInterface {
 	
 	double currentAmount;
 	
-	
 	private static DecimalFormat df = new DecimalFormat("#.##");
 	
 	private int count = 0;
-	
-	
+
 	public InventoryManagement(ViewController controller) {
 		
 		this.controller = controller;
@@ -63,9 +69,8 @@ public class InventoryManagement implements ControllerInterface {
 	
 	public void readInventory() {
 		
-		
 		try {
-			File inventoryObj = new File("\\Users\\Blake Patterson\\Desktop\\Enterprise_Computing\\Enterprise_Computing\\Project_1\\inventory.txt");
+			File inventoryObj = new File("src/inventory.txt");
 			Scanner myReader = new Scanner(inventoryObj);
 			while(myReader.hasNext()) {
 				String data = myReader.nextLine();
@@ -83,14 +88,11 @@ public class InventoryManagement implements ControllerInterface {
 	private void inventoryFiling(String inventoryItem) {
 	
 		String[] s = inventoryItem.split(",");	
-		inventoryTable.put(s[0], s[1]+','+s[2]);
-
-								
+		inventoryTable.put(s[0], s[1]+','+s[2]);								
 	}
 
 	
 	public boolean findInventoryItem(String inventoryNumber,String itemQty) {
-		
 		
 		String item;
 		String[] itemInfo;
@@ -116,7 +118,7 @@ public class InventoryManagement implements ControllerInterface {
 			itemPrice = Double.parseDouble(itemInfo[1].replaceAll("\\s+", ""));
 			itemAmount = Integer.parseInt(itemQty);
 				
-			//Applying discount
+
 			if(itemAmount <= 4 && itemAmount != 0)
 				discount=0.0;
 			else if(itemAmount > 4 && itemAmount <= 9)
@@ -157,7 +159,6 @@ public class InventoryManagement implements ControllerInterface {
 		
 		int j = 0;
 		
-		
 		currentItemsArray = new String[currentItems.size()];
 	
 		for(int i = 0; i < currentItems.size(); i++) {
@@ -170,9 +171,7 @@ public class InventoryManagement implements ControllerInterface {
 	
 	
 	public void FinishOrder() {
-		
-		
-		
+	
 		String itemized = "";
 		String itemizedMessage = "";
 		int j = 0;
@@ -184,8 +183,6 @@ public class InventoryManagement implements ControllerInterface {
 			itemizedMessage += currentItemsArray[i]+'\n';
 		}
 			
-		
-		
 		for(int i = 0; i < currentItems.size(); i++) {
 			finishedItemsArray[i] = currentItems.get(i);
 			itemized += finishedItemsArray[i] +'\n';
@@ -195,7 +192,6 @@ public class InventoryManagement implements ControllerInterface {
 		LocalDateTime date = LocalDateTime.now();
 		DateTimeFormatter formatDate  = DateTimeFormatter.ofPattern("dd-MM-yyyy, HH:mm:ss");
 		DateTimeFormatter formatDateFile  = DateTimeFormatter.ofPattern("ddMMyyyyHHmm");
-		
 		
 		String formattedDate = "Date: "+date.format(formatDate)+"\n";
 		String formattedDateFile = "Date: "+date.format(formatDateFile)+"\n";
@@ -212,16 +208,14 @@ public class InventoryManagement implements ControllerInterface {
 		
 		
 		String orderInformation = formattedDate+numberOfLine+categorize+itemizedMessage+orderSubTotal+taxRate+taxAmountText+df.format(taxAmount)+orderTotalText+df.format(orderTotal)+thankYou;
-		String orderInformationFile = "";//(date.format(formatDateFile))+" "+itemized+(date.format(formatDate));
+		String orderInformationFile = "";
 		
 		for(int k = 0; k < currentItems.size(); k++) {
 			orderInformationFile += (date.format(formatDateFile))+" "+finishedItemsArray[k]+ date.format(formatDate)+"\n";
 		}
 		
-		
 		JOptionPane.showMessageDialog(null, orderInformation);
 		
-	
 		try {
 			
 			File transactionFile = new File("\\Users\\Blake Patterson\\Desktop\\transaction.txt");
@@ -247,13 +241,6 @@ public class InventoryManagement implements ControllerInterface {
 		
 		
 	}
-	
-	
-	
-	
-	
-	
-	
 	
 	@Override
 	public void processExitButtonClick(ProcessButtonObjectEvent e) {

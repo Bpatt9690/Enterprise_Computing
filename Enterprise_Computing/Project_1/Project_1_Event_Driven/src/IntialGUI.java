@@ -58,20 +58,11 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 	static IntialGUI frame;
 	
 	
-	
-	
-	
-	//JLabel lblEnterItemId = new JLabel("Enter item ID for item "+itemNumber);
-	//JLabel lblEnterQuanityFor = new JLabel("Enter quanity for Item "+itemNumber);
-	//JLabel lblItemInfo = new JLabel("Item "+itemNumber+" info");
-	//JLabel lblOrderSubtotalFor 
-	
+
 	private JLabel lblEnterItemId;
 	private JLabel lblEnterQuanityFor;
 	private JLabel lblItemInfo;
 	private JLabel lblOrderSubtotalFor;
-	
-	
 	
 	private int intialNumberOfItems = 0;
 	
@@ -144,8 +135,31 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 				NumberOfItemsField.setEditable(false);
 				
 				if(intialNumberOfItems == 0) {
-					numberItems = Integer.parseInt(NumberOfItemsField.getText());
-					intialNumberOfItems++;
+					
+				
+					if(!(NumberOfItemsField.getText().isEmpty()))
+					{
+					
+						try {
+							numberItems = Integer.parseInt(NumberOfItemsField.getText());
+							intialNumberOfItems++;
+						}
+						catch(NumberFormatException e) {
+							controller.errorMessage("Incorrect Input");
+							controller.newOrder();
+							itemNumber = "1";
+							intialNumberOfItems  = 0;
+							currentItem = 1;
+							NumberOfItemsField.setEditable(true);
+							ProcessItemButton.setText("Process Item "+itemNumber);
+							ConfirmItemButton.setText("Confirm Item "+itemNumber);
+							ViewOrderButton.setEnabled(false);
+							FinishOrderButton.setEnabled(false);
+							ProcessItemButton.setEnabled(true);
+							
+						}
+					
+					}
 				}
 			
 
@@ -175,13 +189,10 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 				controller.successMessage("Item #"+currentItem+" accepted");
 				currentItem++;
 				
-			
 				if(currentItem <= numberItems) {
 					
-			
 					itemNumber = String.valueOf(currentItem);
-					
-					
+
 					ProcessItemButton.setText("Process Item "+itemNumber);
 					ProcessItemButton.setEnabled(true);
 					
@@ -191,7 +202,6 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 					ItemIDField.setText("");
 					ItemQuanityField.setText("");
 					ViewOrderButton.setEnabled(true);
-					
 					
 				}
 				
@@ -205,21 +215,11 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 					ItemQuanityField.setText("");
 				}
 				
-			
-	
-				
-				
 				lblEnterItemId.setText("Enter item ID for item "+itemNumber);
 				lblEnterQuanityFor.setText("Enter quanity for Item "+itemNumber);
 				lblItemInfo.setText("Item "+itemNumber+" info");
 				lblOrderSubtotalFor.setText("Order subtotal for" +itemNumber+" item(s)");
-				
-				
-				
-				
-				
-				
-				
+						
 			}
 		});
 		
@@ -229,7 +229,6 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 		ViewOrderButton = new JButton("View Order");
 		ViewOrderButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//IM.currentOrder(itemInfo, amount, viewOrder);
 				 IM.currentOrder();
 			}
 		});
