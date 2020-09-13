@@ -33,45 +33,32 @@ import javax.swing.SwingConstants;
 public class IntialGUI extends JFrame implements ControllerInterface {
 
 	private JPanel contentPane;
-	
 	private JTextField NumberOfItemsField;
 	private JTextField ItemIDField;
 	private JTextField ItemQuanityField;
 	private JTextField ItemInfoField;
 	private JTextField OrderSubTotalField;
-	
 	static InventoryManagement IM = null;
 	static ViewController controller;
-	
 	private JButton ProcessItemButton;
 	private JButton ConfirmItemButton;
 	private JButton ViewOrderButton;
 	private JButton FinishOrderButton;
 	private JButton NewOrderButton;
 	private JButton ExitButton;
-	
 	private int numberItems;
 	private int currentItem = 1;
 	private String itemNumber = "1";
 	private String itemID;
 	private String itemQty;
 	static IntialGUI frame;
-	
-	
-
 	private JLabel lblEnterItemId;
 	private JLabel lblEnterQuanityFor;
 	private JLabel lblItemInfo;
 	private JLabel lblOrderSubtotalFor;
-	
 	private int intialNumberOfItems = 0;
-	
 	private static DecimalFormat df = new DecimalFormat("#.##");
-	
 
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -82,6 +69,7 @@ public class IntialGUI extends JFrame implements ControllerInterface {
 					controller.addListener(IM);
 					controller.addListener(frame);
 					IM.readInventory();
+					frame.setTitle("Bobs Super Store");
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
