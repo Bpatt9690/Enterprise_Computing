@@ -218,19 +218,19 @@ public class InventoryManagement implements ControllerInterface {
 		
 		try {
 			
-			File transactionFile = new File("\\Users\\Blake Patterson\\Desktop\\transaction.txt");
+			File transactionFile = new File("src/transaction.txt");
 			
 			if(transactionFile.exists() && !transactionFile.isDirectory()) {
 				for(int i = 0; i < currentItemsArray.length;i++) {
-					Files.write(Paths.get("\\Users\\Blake Patterson\\Desktop\\transaction.txt"), orderInformationFile.getBytes(),StandardOpenOption.APPEND);
+					Files.write(Paths.get("src/transaction.txt"), orderInformationFile.getBytes(),StandardOpenOption.APPEND);
 				}
 			}
 				
 			
 			else {
-				File newTransactionFile = new File("\\Users\\Blake Patterson\\Desktop\\transaction.txt");
+				File newTransactionFile = new File("src/transaction.txt");
 				newTransactionFile.createNewFile();
-				Files.write(Paths.get("\\Users\\Blake Patterson\\Desktop\\transaction.txt"), orderInformationFile.getBytes(),StandardOpenOption.APPEND);
+				Files.write(Paths.get("src/transaction.txt"), orderInformationFile.getBytes(),StandardOpenOption.APPEND);
 			}
 				
 			
